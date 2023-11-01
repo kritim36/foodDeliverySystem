@@ -1,7 +1,9 @@
 const User = require("../../model/userModel")
 const bcryptjs = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const sendEmail = require("../../services/sendEmail")
 
+//register
 exports.registerUser = async(req,res)=>{
     const{email,password,phoneNumber,userName} = req.body
     if(!email || !password || !phoneNumber || !userName){
@@ -30,6 +32,7 @@ exports.registerUser = async(req,res)=>{
     })
   }
 
+//login
   exports.loginUser =  async(req,res)=>{
     const{email,password} = req.body
     if(!email || !password){
@@ -65,3 +68,32 @@ exports.registerUser = async(req,res)=>{
       })
     }
   }
+
+//forget password
+exports.forgetPassword = async(req,res)=>{
+    const {email} = req.body;
+    if(!email){
+     return res.status(400).json({
+            message : "please provide email"
+        })
+    }
+    //check if the email is registered or not
+    const userExist = await User.find({userEmail : email})
+    if(userExist.length ==0){
+       return res.status(404).json({
+            message : "Email is not registered"
+        })
+    }
+    //send otp to that email
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    userExist[0].otp = otp
+    await userExist[0].save()
+    await sendEmail ({
+        email : email,
+        subject : "Your otp for fooddelivery forgetpassword",
+        message : `Your otp is ${otp} . don't share with anyone`
+    })
+    res.status(200).json({
+        message : "OTP sent sucessfully"
+    })
+}
