@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const adminSeeder = require("../adminSeeder")
 
 
 exports.connectDatabase = async(URI)=>{
@@ -7,4 +8,9 @@ exports.connectDatabase = async(URI)=>{
  await mongoose.connect(URI)
  //mongodb+srv://foodDelivery:<password>@cluster0.bzmqwes.mongodb.net/?retryWrites=true&w=majority
  console.log("Database connected successfully")
+
+ //admin seeding function
+adminSeeder()
+
 }
+
