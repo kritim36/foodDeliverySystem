@@ -14,6 +14,9 @@ require("dotenv").config()
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
 
+//telling nodejs to give access to upload folder
+app.use(express.static("./"))
+
 //Database connection
 connectDatabase(process.env.MONGO_URI)
 

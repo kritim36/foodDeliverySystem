@@ -1,6 +1,14 @@
 const Product = require("../../../model/productModel")
 
 exports.createProduct = async(req,res)=>{
+    const file = req.file
+    let filePath
+    if(!file){
+        filePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9dFmHpORm762km7LqeyM2f5khiLVhzwAepIcazWq&s"
+    }else{
+        filePath = req.file.filename
+    }
+
     const{productName,productDescription,productStockQty,productPrice,productStatus} = req.body
     if(!productName || !productDescription || !productStockQty || !productPrice || !productStatus){
      return   res.status(400).json({
@@ -13,7 +21,8 @@ exports.createProduct = async(req,res)=>{
         productDescription,
         productStockQty,
         productPrice,
-        productStatus
+        productStatus,
+        productImage : filePath
     })
     res.status(200).json({
         message : "product created sucessfully"
