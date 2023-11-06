@@ -29,7 +29,7 @@ const isAuthenticated = async (req,res,next)=>{
     const doesUserExist =  await User.findOne({_id : decoded.id})
 
    if(!doesUserExist){
-    return res.status(404).json({
+    return res.status(500).json({
         message : "User doesn't exists with that token/id"
     })
    }
