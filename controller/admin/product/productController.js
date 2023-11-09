@@ -1,4 +1,5 @@
 const Product = require("../../../model/productModel")
+const fs = require("fs")
 
 //create product
 exports.createProduct = async(req,res)=>{
@@ -17,13 +18,13 @@ exports.createProduct = async(req,res)=>{
         })
     }
     //insert into product table/collection
-    await Products.create({
+    await Product.create({
         productName,
         productDescription,
         productStockQty,
         productPrice,
         productStatus,
-        productImage : "http://localhost:3000/" +  filePath
+        productImage : process.env.BACKEND_URL +  filePath
     })
     res.status(200).json({
         message : "product created sucessfully"
@@ -69,4 +70,81 @@ exports.getProduct = async (req,res)=>{
             product 
         })
     }
+}
+
+//delete product
+exports.deleteProduct = async(req,res)=>{
+    const{id} = req.params
+    if(!id){
+        return res.status(400).json({
+            message : "please provide id"
+        })
+    }
+    const oldData = await Product.findById(id)
+    if(!oldData){
+        return res.status(404).json({
+            message : "No data found with that id"
+        })
+    }
+ 
+    const oldProductImage = oldData.productImage // http://localhost:3000/1698943267271-bunImage.png"
+    const lengthToCut  = process.env.BACKEND_URL.length
+    const finalFilePathAfterCut = oldProductImage.slice(lengthToCut) 
+         // REMOVE FILE FROM UPLOADS FOLDER
+            fs.unlink("./uploads/" +  finalFilePathAfterCut,(err)=>{
+                if(err){
+                    console.log("error deleting file",err) 
+                }else{
+                    console.log("file deleted successfully")
+                }
+            })
+    await Product.findByIdAndDelete(id)
+    res.status(200).json({
+        message : "Product deleted sucessfully"
+    })
+}
+
+//edit product
+exports.editProduct = async(req,res)=>{
+   
+    const{id} = req.params
+    const{productName,productDescription,productStockQty,productPrice,productStatus} = req.body
+    if(!productName || !productDescription || !productStockQty || !productPrice || !productStatus || !id){
+     return   res.status(400).json({
+            message : "please provide productName,productDescription,productStockQty,productprice,productstatus,id"
+        })
+    }
+    const oldData = await Product.findById(id)
+    if(!oldData){
+      return  res.status(404).json({
+            message : "No data found with that id"
+        })
+    }
+    const oldProductImage = oldData.productImage // "http://localhost:3000/pexels-suzy-hazelwood-2536965.jpg"
+    const lengthToCut  = process.env.BACKEND_URL.length
+    const finalFilePathAfterCut = oldProductImage.slice(lengthToCut) // pexels-suzy-hazelwood-2536965.jpg
+    if(req.file && req.file.filename){
+      // Remove file from upload folder
+      fs.unlink("./uploads/" +  finalFilePathAfterCut, (err)=>{
+        if(err){
+            console.log("error deleting file",err)
+        }else{
+            console.log("file deleted sucessfully")
+        }
+      })
+    }
+    const datas = await Product.findByIdAndUpdate(id,{
+        productName,
+        productDescription,
+        productStockQty,
+        productPrice,
+        productStatus,
+        productImage : req.file && req.file.filename ? process.env.BACKEND_URL +  req.file.filename : oldProductImage
+    },{
+        new : true
+    })
+    res.status(200).json({
+        message : "Product updated sucessfully",
+        datas
+    })
 }
