@@ -6,6 +6,7 @@ const { registerUser, loginUser } = require("./controller/auth/authController")
 //routes
 const authRoute = require("./routes/authRoute")
 const productRoute = require("./routes/productRoute")
+const adminUserRoute = require("./routes/adminUserRoute")
 //routes end
 
 //tell node to use dotenv
@@ -29,6 +30,7 @@ app.get("/",(req,res)=>{
 
 app.use("",authRoute)
 app.use("",productRoute)
+app.use("",adminUserRoute)
 // /register
 // /login
 
