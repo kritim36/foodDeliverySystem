@@ -44,7 +44,7 @@ exports.registerUser = async(req,res)=>{
     //check that if the email user already exist or not
     const userFound = await User.find({userEmail : email})
     if(userFound.length == 0){
-      res.status(404).json({
+      return res.status(404).json({
         message : "User with that email is not registered"
       })
     }

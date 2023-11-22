@@ -4,9 +4,11 @@ const { connectDatabase } = require("./database/database")
 const { registerUser, loginUser } = require("./controller/auth/authController")
 
 //routes
-const authRoute = require("./routes/authRoute")
-const productRoute = require("./routes/productRoute")
-const adminUserRoute = require("./routes/adminUserRoute")
+const authRoute = require("./routes/auth/authRoute")
+const productRoute = require("./routes/admin/productRoute")
+const adminUserRoute = require("./routes/admin/adminUserRoute")
+const userReviewRouter = require("./routes/user/userReviewRoute")
+const profileRoute = require("./routes/user/profileRoute")
 //routes end
 
 //tell node to use dotenv
@@ -28,9 +30,11 @@ app.get("/",(req,res)=>{
     })
 })
 
-app.use("",authRoute)
-app.use("",productRoute)
-app.use("",adminUserRoute)
+app.use("/auth",authRoute)
+app.use("/products",productRoute)
+app.use("/admin",adminUserRoute)
+app.use("/reviews",userReviewRouter)
+app.use("/profile",profileRoute)
 // /register
 // /login
 

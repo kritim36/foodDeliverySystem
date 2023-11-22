@@ -14,5 +14,27 @@ exports.getUsers = async(req,res)=>{
             data  : []
         })
     
- 
 }
+
+//delete user API
+exports.deleteUser = async (req,res)=>{
+    const userId = req.params.id
+    if(!userId){
+       return res.status(400).json({
+          message : "please provide userId"
+        })
+    }
+    //check if the userId user exist or not
+    const user = await User.findById(userId)
+    if(!user){
+       res.status(404).json({
+        message : "User not found with that userId"
+       })
+    }else{
+        await User.findByIdAndDelete(userId)
+        res.status(200).json({
+            message : "User deleted sucessfully"
+        })
+    }
+}
+

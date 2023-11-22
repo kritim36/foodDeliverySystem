@@ -4,7 +4,9 @@ const Schema = mongoose.Schema
 const userSchema  =  new Schema({
     userEmail : {
         type : String,
-        required : [true,'userEmail must be provided']
+        required : [true,'userEmail must be provided'],
+        unique : true,
+        lowercase : true
     },
     userPhoneNumber : {
         type : Number,
@@ -17,8 +19,8 @@ const userSchema  =  new Schema({
     userPassword : {
         type : String,
         required : [true,"Password must be provided"],
-        minlength : 8,
-        select  : false
+        minlength : 8
+        //select  : false
     },
     role : {
         type : String,
@@ -34,6 +36,8 @@ const userSchema  =  new Schema({
         default : false,
         select : false
     }
+},{
+    timestamps : true
 })
 
 const User = mongoose.model("User",userSchema)
